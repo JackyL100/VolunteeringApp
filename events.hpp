@@ -5,9 +5,12 @@
 
 class Event {
     private:
-        std::string description;
-    public:
         
+    public:
+        std::string description;
+        std::string date_range;
+        std::string location;
+        std::string organizer;
 };
 
 #endif
