@@ -2,6 +2,7 @@
 #define SERVER_HPP
 
 #include "events.hpp"
+#include "user_profile.hpp"
 #include <sys/socket.h>
 #include <iostream>
 #include <arpa/inet.h>
@@ -14,6 +15,7 @@
 #include <thread>
 #include <unordered_map>
 #include <queue>
+#include <sstream>
 
 class Server {
     private:
@@ -21,11 +23,13 @@ class Server {
 
         std::vector<std::thread> readingThreads;
         
-        std::vector<Event> allEvents;
+        std::unordered_map<std::string, Event> allEvents;
+
+        std::unordered_map<std::string, UserProfile> users;
 
         std::thread sendingThread;
 
-        std::thread acceptionThread;
+        std::thread acceptingThread;
 
         socklen_t clilen;
 
@@ -53,6 +57,7 @@ class Server {
         
         std::string get_new_message();
 
+        void process_request(std::string request);
 };
 
 #endif

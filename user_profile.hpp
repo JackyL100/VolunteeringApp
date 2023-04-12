@@ -4,6 +4,7 @@
 #include "calendar.hpp"
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 class UserProfile {
     private:
@@ -20,6 +21,9 @@ class UserProfile {
 
         std::string getUsername();
 
+        bool checkPassword(std::string attempt);
+
+        void joinEvent(std::string eventName, std::unordered_map<std::string, Event> eventList); 
 };
 
 #endif

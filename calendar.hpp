@@ -3,10 +3,13 @@
 
 #include "events.hpp"
 #include <vector>
+#include <string>
 
 class Calendar {
     private:
         std::vector<Event> events;
+    public:
+        void addEvent(std::string eventName, std::unordered_map<std::string, Event> eventList);
 };
 
 #endif

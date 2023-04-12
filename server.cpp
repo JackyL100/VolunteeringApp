@@ -37,5 +37,24 @@ void Server::accepting_new_clients() {
     } else {
         std::cout << "Accepted client\n";
     }
+    connected_clients.push_back(client_socket);
     readingThreads.push_back(std::thread([&](){while(alive){reading(client_socket);}}));
+}
+// request structure: request_type, socket, who is making request, parameters
+void Server::process_request(std::string request) {
+    std::vector<std::string> parsed;
+    std::stringstream ss(request);
+    std::string item;
+    while(getline(ss, item, ' ')) {
+        parsed.push_back(item);
+    }
+    if (parsed[0] == "join_event") {
+        users[parsed[1]].joinEvent(parsed[2], allEvents);
+    } else if (parsed[0] == "get_events") {
+
+    } else if (parsed[0] == "submit_login") {
+
+    } else if (parsed[0] == "see_my_events") {
+        
+    }
 }
