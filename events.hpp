@@ -8,6 +8,7 @@ class Event {
         
     public:
         std::string description;
+        std::string date_start;
         std::string date_range;
         std::string location;
         std::string organizer;
