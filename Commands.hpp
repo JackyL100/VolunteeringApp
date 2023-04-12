@@ -3,13 +3,20 @@
 
 #include <string>
 #include <vector>
-using namespace std;
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <sys/types.h>
+#include <iostream>
 
 class Commands {
     public:
-        logIn(string username, string password);
-        signUp(string username, string password);
+        static int sockfd;
+        static void logIn(std::string username, std::string password);
+        static void signUp(std::string username, std::string password);
+        static void joinEvent(std::string eventName);
+        static std::vector<std::string> getEvents();
 
 };
 
+int Commands::sockfd = 0;
 #endif

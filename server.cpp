@@ -53,8 +53,10 @@ void Server::process_request(std::string request) {
     } else if (parsed[0] == "get_events") {
 
     } else if (parsed[0] == "submit_login") {
-
-    } else if (parsed[0] == "see_my_events") {
         
+    } else if (parsed[0] == "see_my_events") {
+
+    } else if (parsed[0] == "signup") {
+        users[parsed[1]] = UserProfile(parsed[1], parsed[2]);
     }
 }
