@@ -1,6 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include "events.hpp"
 #include <sys/socket.h>
 #include <iostream>
 #include <arpa/inet.h>
@@ -19,6 +20,8 @@ class Server {
         int sockfd;
 
         std::vector<std::thread> readingThreads;
+        
+        std::vector<Event> allEvents;
 
         std::thread sendingThread;
 
@@ -49,6 +52,7 @@ class Server {
         void kill();
         
         std::string get_new_message();
+
 };
 
 #endif
