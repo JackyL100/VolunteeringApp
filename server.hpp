@@ -1,7 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "events.hpp"
+#include "event.hpp"
 #include "user_profile.hpp"
 #include <sys/socket.h>
 #include <iostream>
