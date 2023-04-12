@@ -47,8 +47,11 @@
         "stop_token": "cpp",
         "streambuf": "cpp",
         "thread": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "sstream": "cpp"
     },
     "cmake.configureOnOpen": false,
-    "code-runner.runInTerminal": true
+    "code-runner.runInTerminal": true,
+    "C_Cpp.errorSquiggles": "enabled",
+    "omnisharp.enableRoslynAnalyzers": true
 }
