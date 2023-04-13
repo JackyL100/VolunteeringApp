@@ -7,6 +7,7 @@ Event::Event(std::string name, std::string description, std::string organizer, s
     this->date_range = date_range;
     this->location = location;
     this->organizer = organizer;
+    int size = 0;
 }
 
 std::string Event::getDescription() {
@@ -30,7 +31,11 @@ std::string Event::getOrganizer() {
 }
 
 std::string Event::toString() {
-    return name + " " + organizer + " " + location + " " + date_start + " " + date_range + " " + description + "\n";
+    return name + " " + organizer + " " + location + " " + date_start + " " + date_range + " " + description + " " + size + "\n";
+}
+
+int Event::getSize(){
+    return size;
 }
 
 void Event::setDescription(std::string description) {
@@ -55,4 +60,5 @@ void Event::setOrganizer(std::string organizer) {
 
 void Event::addVolunteer(std::string userName) {
     volunteers.push_back(userName);
+    size++;
 }

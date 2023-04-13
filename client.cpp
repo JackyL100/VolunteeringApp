@@ -65,10 +65,8 @@ int main(int argc, char* argv[])
             loggedIn = true;
         }
         else if (input.find("!get_events") != std::string::npos) {
-            std::vector<std::string> events = Commands::getEvents();
-            for (std::string event : events) {
-
-            }
+            std::string option = input.substr(input.find(" ")+1);
+            Commands::viewEvents(option);
         }
         else if (input.find("!create_event") != std::string::npos) {
             std::vector<std::string> event_data(5);

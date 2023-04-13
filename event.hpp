@@ -13,6 +13,7 @@ class Event {
         std::string organizer;     
         std::string name;
         std::vector<std::string> volunteers;
+        int size;
 
     public:
 
@@ -21,6 +22,7 @@ class Event {
         std::string getDate_Range();
         std::string getLocation();
         std::string getOrganizer();
+        int getSize();
         std::string toString();
 
         void setDescription(std::string description);

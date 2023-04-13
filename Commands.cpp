@@ -43,3 +43,19 @@ void Commands::createEvent(std::vector<std::string> eventInfo) {
         assemblyReq += info;
     }
 }
+
+void Commands::viewEvents(std::string option){
+    std::vector<std::string> events = Commands::getEvents();
+
+    if (option == "date_start"){
+        for (std::string event : events) {
+            std::string name = event.substr(0, event.find(" ")-1);
+            std::string organizer = event.substr(0, event.find(" ", 1)-1);
+            std::string name = event.substr(0, event.find(" ")-1);
+            std::string name = event.substr(0, event.find(" ")-1);
+            std::string name = event.substr(0, event.find(" ")-1);
+            std::string name = event.substr(0, event.find(" ")-1);
+            int size = std::stoi(event.substr(0, event.find(" ")-1));
+        }   
+    }
+}

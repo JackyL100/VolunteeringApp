@@ -16,7 +16,7 @@ class Commands {
         static std::string signUp(std::string username, std::string password);
         static void joinEvent(std::string eventName);
         static void createEvent(std::vector<std::string> eventInfo);
-        static void viewEvents();
+        static void viewEvents(std::string option);
         static std::vector<std::string> getEvents();
 
 };
