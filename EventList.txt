@@ -1,0 +1,33 @@
+    this->name = name;
+    this->description = description;
+    this->date_start = date_start;
+    this->date_range = date_range;
+    this->location = location;
+    this->organizer = organizer;
+
+1
+Care for Animals
+4/15/23
+60 days
+
+Liz Raganella
+
+2
+Gardening
+4/15/23
+1 day
+Join us for a volunteer workday at a GreenThumb community garden. Help us spread woodchips and prepare the garden for spring! New members are welcome to get involved!
+207 South 2nd Street, Brooklyn, NY 11211
+Carlos Martinez
+
+3
+Food Drive
+
+
+4
+Help Kids Read
+4/13/23
+30 days
+In-person tutoring at one of our reading centers
+Lower East Side, Central Harlem, East Harlem, South Bronx, South Jamaica (Queens), Bed Stuy and Cypress Hills (Brooklyn)
+Rhea Quiñones
