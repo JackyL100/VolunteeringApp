@@ -66,7 +66,7 @@ void Server::accepting_new_clients() {
 }
 
 void Server::addUserToEvent(std::string eventName, std::string userName) {
-    allEvents[eventName].addVolunteer(userName);
+    allEvents[eventName]->addVolunteer(userName);
 }
 
 void Server::sendEventList() {
@@ -76,7 +76,7 @@ void Server::sendEventList() {
 bool Server::checkLogIn(std::string userName, std::string password) {
     auto it = users.find(userName);
     if (it != users.end()) {
-        if (it->second.checkPassword(password)) {
+        if (it->second->checkPassword(password)) {
             return true;
         }
     }
@@ -84,12 +84,12 @@ bool Server::checkLogIn(std::string userName, std::string password) {
 }
 
 void Server::sendUserEvents(std::string userName) {
-    std::vector<std::string> user_events = users[userName].getEvents();
+    std::vector<std::string> user_events = users[userName]->getEvents();
 
 }
 
 void Server::createNewAccount(std::string newName, std::string newPassword) {
-    users[newName] = UserProfile(newName, newPassword);
+    users[newName] = std::make_unique<UserProfile>(newName, newPassword);
 }
 
 void Server::createNewEvent(std::vector<std::string> info) {
@@ -106,7 +106,7 @@ void Server::process_request(std::string request) {
     }
     if (parsed[0] == "join_event") {
         if (allEvents.find(parsed[2]) != allEvents.end()) {
-            users[parsed[1]].joinEvent(parsed[2], allEvents);
+            users[parsed[1]]->joinEvent(parsed[2], allEvents);
             addUserToEvent(parsed[2], parsed[1]); 
         } else {
             if (send(connections[parsed[1]], "That event doesn't exist", 25, 0) < 0) {std::cout << "Error sending to " << parsed[1] << "\n";}
@@ -125,7 +125,8 @@ void Server::process_request(std::string request) {
     } else if (parsed[0] == "see_my_events") {
         sendEventList();
     } else if (parsed[0] == "signup") {
-        users[parsed[2]] = UserProfile(parsed[2], parsed[3]);
+        //users[parsed[2]] = UserProfile(parsed[2], parsed[3]);
+        createNewAccount(parsed[2], parsed[3]);
         connections[parsed[2]] = std::stoi(parsed[1]);
         if (send(connections[parsed[2]], parsed[2].c_str(), parsed[2].size(), 0) < 0) {std::cout << "Error sending to " << parsed[2] << "\n";}
     } else if (parsed[0] == "create_event") {

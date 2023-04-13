@@ -16,6 +16,7 @@
 #include <unordered_map>
 #include <queue>
 #include <sstream>
+#include <memory>
 
 class Server {
     private:
@@ -23,9 +24,9 @@ class Server {
 
         std::vector<std::thread> readingThreads;
         
-        std::unordered_map<std::string, Event> allEvents;
+        std::unordered_map<std::string, std::shared_ptr<Event>> allEvents;
 
-        std::unordered_map<std::string, UserProfile> users;
+        std::unordered_map<std::string, std::unique_ptr<UserProfile>> users;
 
         std::unordered_map<std::string, int> connections;
 

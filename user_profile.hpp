@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <utility>
+#include <memory>
 
 class UserProfile {
     private:
@@ -21,7 +23,7 @@ class UserProfile {
 
         bool checkPassword(std::string attempt);
 
-        void joinEvent(std::string eventName, std::unordered_map<std::string, Event> eventList);
+        void joinEvent(std::string eventName, std::unordered_map<std::string, std::shared_ptr<Event>> eventList);
 
         std::vector<std::string> getEvents(); 
 };
