@@ -16,6 +16,7 @@ Server::Server(int port, int max_clients) {
 }
 
 std::string Server::get_new_message(bool remove) {
+    while(incoming_requests.empty()) {}
     std::string new_message = incoming_requests.front();
     std::cout << "New Message" << new_message << "\n";
     if (remove) {
@@ -24,10 +25,25 @@ std::string Server::get_new_message(bool remove) {
     return new_message;
 }
 
-void Server::reading(int client_socket) {
+bool Server::reading(int client_socket) {
     char buffer[1024];
-    if (recv(client_socket, buffer, 1023, 0) < 0) error("Could not read");
-    incoming_requests.emplace(buffer);
+    if (recv(client_socket, buffer, 1023, 0) < 0) {
+        std::string disconnected_user;
+        for (const auto& [key, value] : connections) {
+            if (value == client_socket) {
+                disconnected_user = key;
+            }
+        }
+        connections.erase(disconnected_user);
+        return false;
+    }
+    std::string str(buffer);
+    if (str.find("login") != std::string::npos) {
+        str.insert(6, std::to_string(client_socket) + " ");
+    } else if (str.find("signup") != std::string::npos) {
+        str.insert(7, std::to_string(client_socket) + " ");
+    }
+    return true;
 }
 
 void Server::accepting_new_clients() {
@@ -40,8 +56,7 @@ void Server::accepting_new_clients() {
     } else {
         std::cout << "Accepted client\n";
     }
-    connected_clients.push_back(client_socket);
-    readingThreads.push_back(std::thread([&](){while(alive){reading(client_socket);}}));
+    readingThreads.push_back(std::thread([&](){while(alive){if (!reading(client_socket)) {break;}}}));
 }
 
 void Server::addUserToEvent(std::string eventName, std::string userName) {
@@ -84,20 +99,29 @@ void Server::process_request(std::string request) {
         parsed.push_back(item);
     }
     if (parsed[0] == "join_event") {
-        users[parsed[1]].joinEvent(parsed[2], allEvents);
-        addUserToEvent(parsed[2], parsed[1]);
+        if (allEvents.find(parsed[2]) != allEvents.end()) {
+            users[parsed[1]].joinEvent(parsed[2], allEvents);
+            addUserToEvent(parsed[2], parsed[1]); 
+        } else {
+            if (send(connections[parsed[1]], "That event doesn't exist", 25, 0) < 0) {std::cout << "Error sending to " << parsed[1] << "\n";}
+        }
     } else if (parsed[0] == "get_events") {
 
     } else if (parsed[0] == "submit_login") {
-        if (checkLogIn) {
+        if (checkLogIn(parsed[2], parsed[3])) {
             // send username to client
+            connections[parsed[2]] = std::stoi(parsed[1]);
+            if (send(connections[parsed[2]], parsed[2].c_str(), parsed[2].size(), 0) < 0) {std::cout << "Error sending to " << parsed[2] << "\n";}
         } else {
             // tell them they suck
+            if (send(connections[parsed[2]], "DENIED haha begone incorrect user", 34, 0) < 0) {std::cout << "Error sending to" << parsed[2] << "\n";}
         }
     } else if (parsed[0] == "see_my_events") {
         sendEventList();
     } else if (parsed[0] == "signup") {
-        users[parsed[1]] = UserProfile(parsed[1], parsed[2]);
+        users[parsed[2]] = UserProfile(parsed[2], parsed[3]);
+        connections[parsed[2]] = std::stoi(parsed[1]);
+        if (send(connections[parsed[2]], parsed[2].c_str(), parsed[2].size(), 0) < 0) {std::cout << "Error sending to " << parsed[2] << "\n";}
     } else if (parsed[0] == "create_event") {
         std::vector<std::string> event_info(6);
     }

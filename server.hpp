@@ -27,6 +27,8 @@ class Server {
 
         std::unordered_map<std::string, UserProfile> users;
 
+        std::unordered_map<std::string, int> connections;
+
         std::thread sendingThread;
 
         std::thread acceptingThread;
@@ -37,7 +39,7 @@ class Server {
 
         bool alive;
 
-        void reading(int client_socket);
+        bool reading(int client_socket);
 
         void accepting_new_clients();
 
@@ -59,7 +61,6 @@ class Server {
         }
 
     public:
-        std::vector<int> connected_clients;
 
         std::queue<std::string> incoming_requests;
 

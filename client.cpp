@@ -1,13 +1,14 @@
+#include "commands.hpp"
 #include <iostream>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
-#include "commands.hpp"
 
 void get_commands(){
     std::cout << "!login username password\n";
     std::cout << "!signup username password\n";
-    std::cout << "!get_events";
+    std::cout << "!get_events\n";
+    std::cout << "!create_event\n";
     std::cout << "!exit\n";
     return;
 }
@@ -38,6 +39,7 @@ int main(int argc, char* argv[])
     std::cout << "Enter ""!help"" for commands\n";
     
     int x = 0;
+    bool loggedIn = false;
     while (x < 1){
         std::string input;
         std::cout << "Enter a command\n";
@@ -45,15 +47,22 @@ int main(int argc, char* argv[])
         if (input == "!help"){
             get_commands();
         }
-        else if (input.find("!login") != std::string::npos){
+        else if (!loggedIn && input.find("!login") != std::string::npos){
             std::string username = input.substr(input.find(" ", 0)+1,input.find(" ", 1)-2);
             std::string password = input.substr(input.find(username)+username.length()+1);
-            Commands::logIn(username, password);
+            std::string server_response = Commands::logIn(username, password);
+            if (server_response == "DENIED haha begone incorrect user") {
+                std::cout << "failed to login\n";
+            } else {
+                Commands::user = server_response;
+                loggedIn = true;
+            }
         } 
-        else if (input.find("!signup") != std::string::npos) {
+        else if (!loggedIn && input.find("!signup") != std::string::npos) {
             std::string username = input.substr(input.find(" ", 0)+1,input.find(" ", 1)-2);
             std::string password = input.substr(input.find(username)+username.length()+1);
-            Commands::signUp(username, password);
+            Commands::user = Commands::signUp(username, password);
+            loggedIn = true;
         }
         else if (input.find("!get_events") != std::string::npos) {
             std::vector<std::string> events = Commands::getEvents();
@@ -73,6 +82,9 @@ int main(int argc, char* argv[])
             std::cin >> event_data[3];
             std::cout << "Enter how long the Volunteering Event will last: ";
             std::cin >> event_data[4];
+        } 
+        else if (input.find("!join_event") != std::string::npos) {
+            
         }
         else if (input == "!exit"){
             x = 2;
