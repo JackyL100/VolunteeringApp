@@ -41,6 +41,18 @@ class Server {
 
         void accepting_new_clients();
 
+        void addUserToEvent(std::string eventName, std::string userName);
+
+        void sendEventList();
+
+        bool checkLogIn(std::string userName, std::string password);
+
+        void sendUserEvents(std::string userName);
+
+        void createNewAccount(std::string newName, std::string newPassword);
+
+        void createNewEvent(std::vector<std::string> info);
+
         void error(const char* msg) {
             perror(msg);
             exit(1);
@@ -55,7 +67,7 @@ class Server {
 
         void kill();
         
-        std::string get_new_message();
+        std::string get_new_message(bool remove);
 
         void process_request(std::string request);
 };

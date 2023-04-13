@@ -27,3 +27,12 @@ void Commands::joinEvent(std::string eventName) {
     assemblyReq = "join_event " + std::to_string(Commands::sockfd) + " " + eventName;
     if (send(Commands::sockfd, assemblyReq.c_str(), assemblyReq.size(), 0) < 0) {}
 }
+
+void Commands::createEvent(std::vector<std::string> eventInfo) {
+    std::string assemblyReq;
+    assemblyReq = "create_event " + std::to_string(Commands::sockfd);
+    for (std::string info : eventInfo) {
+        assemblyReq += " ";
+        assemblyReq += info;
+    }
+}

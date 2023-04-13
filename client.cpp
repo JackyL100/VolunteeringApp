@@ -58,8 +58,21 @@ int main(int argc, char* argv[])
         else if (input.find("!get_events") != std::string::npos) {
             std::vector<std::string> events = Commands::getEvents();
             for (std::string event : events) {
-                
+
             }
+        }
+        else if (input.find("!create_event") != std::string::npos) {
+            std::vector<std::string> event_data(5);
+            std::cout << "Enter the name of the Volunteering Event: ";
+            std::cin >> event_data[0];
+            std::cout << "Enter the description of the Volunteering Event: ";
+            std::cin >> event_data[1];
+            std::cout << "Enter the location of the Volunteering Event: ";
+            std::cin >> event_data[2];
+            std::cout << "Enter the starting date of the Volunteering Event: ";
+            std::cin >> event_data[3];
+            std::cout << "Enter how long the Volunteering Event will last: ";
+            std::cin >> event_data[4];
         }
         else if (input == "!exit"){
             x = 2;

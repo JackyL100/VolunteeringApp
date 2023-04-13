@@ -17,13 +17,13 @@ class UserProfile {
     public:
         UserProfile(std::string username, std::string password);
 
-        void displayCalendar();
-
         std::string getUsername();
 
         bool checkPassword(std::string attempt);
 
-        void joinEvent(std::string eventName, std::unordered_map<std::string, Event> eventList); 
+        void joinEvent(std::string eventName, std::unordered_map<std::string, Event> eventList);
+
+        std::vector<std::string> getEvents(); 
 };
 
 #endif

@@ -20,3 +20,7 @@ bool UserProfile::checkPassword(std::string attempt) {
 void UserProfile::joinEvent(std::string eventName, std::unordered_map<std::string, Event> eventList) {
     current_events.addEvent(eventName, eventList);
 }
+
+std::vector<std::string> UserProfile::getEvents() {
+    return current_events.getEvents();
+}

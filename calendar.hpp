@@ -10,6 +10,7 @@ class Calendar {
         std::vector<Event> events;
     public:
         void addEvent(std::string eventName, std::unordered_map<std::string, Event> eventList);
+        std::vector<std::string> getEvents();
 };
 
 #endif
