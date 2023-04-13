@@ -1,5 +1,7 @@
 #include "Commands.hpp"
 
+int Commands::sockfd = 0;
+std::string Commands::user = "";
 
 std::string Commands::logIn(std::string username, std::string password){
     std::string assembleReq;

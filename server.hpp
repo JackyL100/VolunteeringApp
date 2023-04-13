@@ -41,8 +41,6 @@ class Server {
 
         bool reading(int client_socket);
 
-        void accepting_new_clients();
-
         void addUserToEvent(std::string eventName, std::string userName);
 
         void sendEventList();
@@ -67,10 +65,14 @@ class Server {
         Server(int port, int max_clients);
 
         void kill();
+
+        bool isAlive();
         
         std::string get_new_message(bool remove);
 
         void process_request(std::string request);
+
+        void accepting_new_clients();
 };
 
 #endif

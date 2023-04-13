@@ -21,6 +21,4 @@ class Commands {
 
 };
 
-int Commands::sockfd = 0;
-std::string Commands::user = "";
 #endif
