@@ -57,11 +57,11 @@ void Commands::viewEvents(std::string option){
     for (std::string event : events) {
         //substrings names, organizer, location, etc from events
         std::string name = event.substr(0, event.find(" ") - 1);
-        std::string organizer = event.substr(event.find(name.length, 1) - 1, event.find(" ", name.length + 1));
-        std::string location = event.substr(event.find(organizer.length, 1) - 1, event.find(" ", organizer.length + 1));
-        std::string date_start = event.substr(event.find(location.length, 1) - 1, event.find(" ", location.length + 1));
-        std::string date_range = event.substr(event.find(date_start.length, 1) - 1, event.find(" ", date_start.length + 1));
-        std::string description = event.substr(event.find(date_range.length, 1) - 1, event.find(" ", date_range.length + 1));
+        std::string organizer = event.substr(event.find(name.size(), 1) - 1, event.find(" ", name.size() + 1));
+        std::string location = event.substr(event.find(organizer.size(), 1) - 1, event.find(" ", organizer.size() + 1));
+        std::string date_start = event.substr(event.find(location.size(), 1) - 1, event.find(" ", location.size() + 1));
+        std::string date_range = event.substr(event.find(date_start.size(), 1) - 1, event.find(" ", date_start.size() + 1));
+        std::string description = event.substr(event.find(date_range.size(), 1) - 1, event.find(" ", date_range.size() + 1));
         int size = std::stoi(description.substr(0, description.find(" ") - 1));
         //puts them into a vector
         std::vector<std::string> singleEvent;
@@ -79,9 +79,9 @@ void Commands::viewEvents(std::string option){
         //sorts by a size
         sort(eventList.begin(), eventList.end(), sortSize);
 
-        for (int i = 0; i < eventList.length - 1;i++) {
-            for (int j = 0; j < eventList[0].length - 1; j++) {
-                cout << vect[i][j] << " ";
+        for (int i = 0; i < eventList.size() - 1;i++) {
+            for (int j = 0; j < eventList[0].size() - 1; j++) {
+                std::cout << eventList[i][j] << " ";
             }
             std::cout << "\n";
         }
