@@ -148,5 +148,5 @@ bool sortName(const std::vector<std::string>& v1, const std::vector<std::string>
 }
 
 bool sortOrganizer(const std::vector<std::string>& v1, const std::vector<std::string>& v2){
-    return v1[0].compare(v2[0]);
+    return v1[1].compare(v2[1]);
 }
