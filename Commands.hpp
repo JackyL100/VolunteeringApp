@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <iostream>
+#include <algorithm>
 
 class Commands {
     public:

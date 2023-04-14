@@ -2,6 +2,7 @@
 
 void Server::kill() {
     alive = false;
+    std::cout << "Server was killed\n";
 }
 
 bool Server::isAlive() {
@@ -33,7 +34,7 @@ std::string Server::get_new_message(bool remove) {
 
 bool Server::reading(int client_socket) {
     char buffer[1024];
-    if (recv(client_socket, buffer, 1023, 0) < 0) {
+    if (recv(client_socket, buffer, 1024, 0) < 0) {
         std::string disconnected_user;
         for (const auto& [key, value] : connections) {
             if (value == client_socket) {
@@ -42,14 +43,17 @@ bool Server::reading(int client_socket) {
         }
         connections.erase(disconnected_user);
         return false;
+    } else {
+        std::string str(buffer);
+        std::cout << str << "\n";
+        if (str.find("login") != std::string::npos) {
+            str.insert(6, std::to_string(client_socket) + " ");
+        } else if (str.find("signup") != std::string::npos) {
+            str.insert(7, std::to_string(client_socket) + " ");
+        }
+        incoming_requests.push(str);
+        return true;        
     }
-    std::string str(buffer);
-    if (str.find("login") != std::string::npos) {
-        str.insert(6, std::to_string(client_socket) + " ");
-    } else if (str.find("signup") != std::string::npos) {
-        str.insert(7, std::to_string(client_socket) + " ");
-    }
-    return true;
 }
 
 void Server::accepting_new_clients() {
@@ -62,7 +66,7 @@ void Server::accepting_new_clients() {
     } else {
         std::cout << "Accepted client\n";
     }
-    readingThreads.push_back(std::thread([&](){while(alive){if (!reading(client_socket)) {break;}}}));
+    readingThreads.push_back(std::thread([&](){while(alive){if (!reading(client_socket)) {std::cout << "Broken\n";break;}}}));
 }
 
 void Server::addUserToEvent(std::string eventName, std::string userName) {
@@ -77,9 +81,11 @@ bool Server::checkLogIn(std::string userName, std::string password) {
     auto it = users.find(userName);
     if (it != users.end()) {
         if (it->second->checkPassword(password)) {
+            std::cout << "Login successful\n";
             return true;
         }
     }
+    std::cout << "Login Fail\n";
     return false;
 }
 
@@ -114,6 +120,7 @@ void Server::process_request(std::string request) {
     } else if (parsed[0] == "get_events") {
 
     } else if (parsed[0] == "submit_login") {
+        std::cout << "Someone is trying to login\n";
         if (checkLogIn(parsed[2], parsed[3])) {
             // send username to client
             connections[parsed[2]] = std::stoi(parsed[1]);
@@ -131,5 +138,7 @@ void Server::process_request(std::string request) {
         if (send(connections[parsed[2]], parsed[2].c_str(), parsed[2].size(), 0) < 0) {std::cout << "Error sending to " << parsed[2] << "\n";}
     } else if (parsed[0] == "create_event") {
         std::vector<std::string> event_info(6);
+    } else {
+        std::cout << "Received: " << request << "\n";
     }
 }

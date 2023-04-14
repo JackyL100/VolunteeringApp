@@ -31,7 +31,7 @@ std::string Event::getOrganizer() {
 }
 
 std::string Event::toString() {
-    return name + " " + organizer + " " + location + " " + date_start + " " + date_range + " " + description + " " + size + "\n";
+    return name + " " + organizer + " " + location + " " + date_start + " " + date_range + " " + description + " " + std::to_string(size) + "\n";
 }
 
 int Event::getSize(){

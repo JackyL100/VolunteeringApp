@@ -3,7 +3,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
-
+#include <unistd.h>
 void get_commands(){
     std::cout << "!login username password\n";
     std::cout << "!signup username password\n";
@@ -56,6 +56,8 @@ int main(int argc, char* argv[])
             } else {
                 Commands::user = server_response;
                 loggedIn = true;
+                std::cout << "Logged In!\n";
+                std::cout << "You are " << Commands::user << "\n";
             }
         } 
         else if (!loggedIn && input.find("!signup") != std::string::npos) {
@@ -63,6 +65,8 @@ int main(int argc, char* argv[])
             std::string password = input.substr(input.find(username)+username.length()+1);
             Commands::user = Commands::signUp(username, password);
             loggedIn = true;
+            std::cout << "Logged In!\n";
+            std::cout << "You are " << Commands::user << "\n";
         }
         else if (input.find("!get_events") != std::string::npos) {
             std::string option = input.substr(input.find(" ")+1);
@@ -87,6 +91,7 @@ int main(int argc, char* argv[])
         else if (input == "!exit"){
             x = 2;
             std::cout << "Exiting\n";
+            close(Commands::sockfd);
         }
         else
         {
