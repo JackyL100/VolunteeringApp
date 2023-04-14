@@ -9,7 +9,7 @@ bool Server::isAlive() {
     return alive;
 }
 
-Server::Server(int port, int max_clients) {
+Server::Server(int port, int max_clients, bool use_dummy_data) {
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) error("SERVER ERROR OPENING SOCKET");
     memset(&serv_addr,0,sizeof(serv_addr));
@@ -20,6 +20,10 @@ Server::Server(int port, int max_clients) {
     listen(sockfd, max_clients);
     acceptingThread = std::thread([this](){while(this->alive){accepting_new_clients();}});
     std::cout << "Server is accepting clients now\n";
+    if (use_dummy_data) {
+        users["Bob"] = std::make_unique<UserProfile>("Bob", "1234");
+        allEvents["WWF Fundraiser"] = std::make_shared<Event>("WWF Fundraiser", "Raise money for animal conservation", "WWF", "New York", "01/00/00", "1");
+    }
 }
 
 std::string Server::get_new_message(bool remove) {
@@ -46,8 +50,8 @@ bool Server::reading(int client_socket) {
     } else {
         std::string str(buffer);
         std::cout << str << "\n";
-        if (str.find("login") != std::string::npos) {
-            str.insert(6, std::to_string(client_socket) + " ");
+        if (str.find("submit_login") != std::string::npos) {
+            str.insert(13, std::to_string(client_socket) + " ");
         } else if (str.find("signup") != std::string::npos) {
             str.insert(7, std::to_string(client_socket) + " ");
         }
@@ -91,7 +95,11 @@ bool Server::checkLogIn(std::string userName, std::string password) {
 
 void Server::sendUserEvents(std::string userName) {
     std::vector<std::string> user_events = users[userName]->getEvents();
-
+    std::string giant_string = "";
+    for (std::string& event: user_events) {
+        giant_string += event;
+    }
+    if (send(connections[userName], giant_string.c_str(), giant_string.size(), 0) < 0) {std::cout << "Error sending to " << userName << "\n";}
 }
 
 void Server::createNewAccount(std::string newName, std::string newPassword) {
@@ -130,7 +138,7 @@ void Server::process_request(std::string request) {
             if (send(connections[parsed[2]], "DENIED haha begone incorrect user", 34, 0) < 0) {std::cout << "Error sending to" << parsed[2] << "\n";}
         }
     } else if (parsed[0] == "see_my_events") {
-        sendEventList();
+        sendUserEvents(parsed[1]);
     } else if (parsed[0] == "signup") {
         //users[parsed[2]] = UserProfile(parsed[2], parsed[3]);
         createNewAccount(parsed[2], parsed[3]);

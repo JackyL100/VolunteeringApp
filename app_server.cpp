@@ -7,7 +7,7 @@ void quit(Server& server) {
 }
 
 int main() {
-    Server server(80, 10);
+    Server server(80, 10, true);
     std::thread killThread(quit, std::ref(server));
     while (server.isAlive()) {
         server.process_request(server.get_new_message(true));
