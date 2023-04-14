@@ -24,21 +24,36 @@ std::string Commands::signUp(std::string username, std::string password){
 }
 
 std::vector<std::string> Commands::getEvents(std::string option) {
+    //std::string assembleReq = "see_my_events " + Commands::user;
     std::string assembleReq;
+    std::cout << "Option: " << option << "\n";
     if (option == "my"){
         assembleReq = "see_my_events " + Commands::user;
     }
     else
     {
-        assembleReq = "all_events";
+        assembleReq = "all_events" + Commands::user;
     }
     if (send(Commands::sockfd, assembleReq.c_str(), assembleReq.size(), 0) < 0) {}
+    std::cout << "Awaiting Response\n";
+    char buffer[1024];
+    if (recv(Commands::sockfd, buffer, 1024, 0) < 0) {std::cout << "ah shit\n";}
+    std::vector<std::string> returned;
+    std::stringstream ss(buffer);
+    std::string item;
+    while(getline(ss, item, '\n')) {
+        returned.push_back(item);
+    }
+    return returned;
 }
 
 void Commands::joinEvent(std::string eventName) {
     std::string assemblyReq;
     assemblyReq = "join_event " + Commands::user + " " + eventName;
     if (send(Commands::sockfd, assemblyReq.c_str(), assemblyReq.size(), 0) < 0) {}
+    char buffer[1024];
+    if (recv(Commands::sockfd, buffer, 1023, 0) < 0) {std::cout << "ah shit\n";}
+    std::cout << buffer << "\n";
 }
 
 void Commands::createEvent(std::vector<std::string> eventInfo) {
@@ -51,8 +66,31 @@ void Commands::createEvent(std::vector<std::string> eventInfo) {
     if (send(Commands::sockfd, assemblyReq.c_str(), assemblyReq.size(), 0) < 0) {}
 }
 
+bool sortSize(const std::vector<std::string>& v1, const std::vector<std::string>& v2)
+{
+    return std::stoi(v1[6]) < std::stoi(v2[6]);
+}
+
+bool sortDate(const std::vector<std::string>& v1, const std::vector<std::string>& v2)
+{
+    return std::stoi(v1[4]) < std::stoi(v2[4]);
+}
+
+bool sortDateRange(const std::vector<std::string>& v1, const std::vector<std::string>& v2)
+{
+    return std::stoi(v1[5]) < std::stoi(v2[5]);
+}
+
+bool sortName(const std::vector<std::string>& v1, const std::vector<std::string>& v2){
+    return v1[0].compare(v2[0]);
+}
+
+bool sortOrganizer(const std::vector<std::string>& v1, const std::vector<std::string>& v2){
+    return v1[1].compare(v2[1]);
+}
+
 void Commands::viewEvents(std::string option){
-    std::vector<std::string> events = Commands::getEvents("all");
+    std::vector<std::string> events = Commands::getEvents("my");
     std::vector<std::vector<std::string>> eventList;
     for (std::string event : events) {
         //substrings names, organizer, location, etc from events
@@ -84,7 +122,7 @@ void Commands::viewEvents(std::string option){
     }
     if (option == "size"){
         //sorts by a size
-        sort(eventList.begin(), eventList.end(), sortSize);
+        std::sort(eventList.begin(), eventList.end(), sortSize);
 
         for (int i = 0; i < eventList.size();i++) {
             for (int j = 0; j < eventList[0].size(); j++) {
@@ -114,7 +152,7 @@ void Commands::viewEvents(std::string option){
         }
     }
     else if(option == "date_start"){
-        sort(eventList.begin(), eventList.end(), sortDate);
+        std::sort(eventList.begin(), eventList.end(), sortDate);
 
         for (int i = 0; i < eventList.size();i++) {
             for (int j = 0; j < eventList[0].size(); j++) {
@@ -124,7 +162,7 @@ void Commands::viewEvents(std::string option){
         }
     }
     else if(option == "date_range"){
-        sort(eventList.begin(), eventList.end(), sortDateRange);
+        std::sort(eventList.begin(), eventList.end(), sortDateRange);
 
         for (int i = 0; i < eventList.size();i++) {
             for (int j = 0; j < eventList[0].size(); j++) {
@@ -133,75 +171,4 @@ void Commands::viewEvents(std::string option){
             std::cout << "\n";
         }
     }
-}
-
-bool sortSize(const std::vector<std::string>& v1, const std::vector<std::string>& v2)
-{
-    return std::stoi(v1[6]) < std::stoi(v2[6]);
-}
-
-bool sortDate(const std::vector<std::string>& v1, const std::vector<std::string>& v2)
-{
-    std::vector<std::string> arrlist1;
-    std::vector<std::string> arrlist2;
-    std::string first = v1[3];
-    std::string second = v2[3];
-    //splits first date into 3 
-    arrlist1.push_back(first.substr(0, first.find("/")));
-    first = first.substr(first.find("/") + 1);
-    arrlist1.push_back(first.substr(0, first.find("/")));
-    first = first.substr(first.find("/") + 1);
-    arrlist1.push_back(first);
-    //splites second date into 3
-    arrlist2.push_back(second.substr(0, second.find("/")));
-    second = second.substr(second.find("/") + 1);
-    arrlist2.push_back(second.substr(0, second.find("/")));
-    second = second.substr(second.find("/") + 1);
-    arrlist2.push_back(second);
-    //compares years
-    if (std::stoi(arrlist1[2]) != std::stoi(arrlist2[2])) {
-        
-        if (std::stoi(arrlist1[2]) < std::stoi(arrlist2[2])) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    //compares months
-    else if (std::stoi(arrlist1[0]) != std::stoi(arrlist2[0])) {
-
-        if (std::stoi(arrlist1[0]) < std::stoi(arrlist2[0])) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    //compares days
-    else if (std::stoi(arrlist1[1]) != std::stoi(arrlist2[1])) {
-
-        if (std::stoi(arrlist1[1]) < std::stoi(arrlist2[1])) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    else {
-        return true;
-    }
-}
-
-bool sortDateRange(const std::vector<std::string>& v1, const std::vector<std::string>& v2)
-{
-    return std::stoi(v1[5]) < std::stoi(v2[5]);
-}
-
-bool sortName(const std::vector<std::string>& v1, const std::vector<std::string>& v2){
-    return v1[0].compare(v2[0]);
-}
-
-bool sortOrganizer(const std::vector<std::string>& v1, const std::vector<std::string>& v2){
-    return v1[1].compare(v2[1]);
 }

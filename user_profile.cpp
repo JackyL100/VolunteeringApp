@@ -9,6 +9,10 @@ std::string UserProfile::getUsername() {
     return username;
 }
 
+std::string UserProfile::getPassword() {
+    return password;
+}
+
 bool UserProfile::checkPassword(std::string attempt) {
     if (attempt == password) {
         return true;

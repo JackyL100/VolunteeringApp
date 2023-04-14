@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <iostream>
 #include <algorithm>
+#include <sstream>
 
 class Commands {
     public:

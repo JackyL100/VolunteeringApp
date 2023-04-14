@@ -18,6 +18,8 @@
 #include <sstream>
 #include <memory>
 
+// compile command: g++ event.cpp user_profile.cpp calendar.cpp server.cpp app_server.cpp -std=c++17 -o server.out
+
 class Server {
     private:
         int sockfd;
@@ -44,7 +46,7 @@ class Server {
 
         void addUserToEvent(std::string eventName, std::string userName);
 
-        void sendEventList();
+        void sendEventList(std::string userName);
 
         bool checkLogIn(std::string userName, std::string password);
 

@@ -4,6 +4,9 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+// compile command: g++ Commands.cpp client.cpp -std=c++17 -o client.out
+
 void get_commands(){
     std::cout << "!login username password\n";
     std::cout << "!signup username password\n";
@@ -73,7 +76,7 @@ int main(int argc, char* argv[])
             std::string option = input.substr(input.find(" ")+1);
             std::vector <std::string> eventlist = Commands::getEvents(option);
             for (int i = 0; i < eventlist.size(); i++){
-                std::cout << i + ": " + eventlist[i];
+                std::cout << i << ": " << eventlist[i];
             }
         }
         else if (input.find("!filter_events") != std::string::npos){
@@ -94,8 +97,9 @@ int main(int argc, char* argv[])
             std::cin >> event_data[4];
         } 
         else if (input.find("!join_event") != std::string::npos) {
-            std::string name = input.substr(input.find(" ", 0)+1,input.find(" ", 1)-2);
-            Commands::joinEvent(name);
+            //std::string name = input.substr(input.find(" ", 0)+1,input.find(" ", 1)-2);
+            input.erase(0, 13);
+            Commands::joinEvent(input);
         }
         else if (input == "!exit"){
             x = 2;

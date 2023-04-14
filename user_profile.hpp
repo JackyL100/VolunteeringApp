@@ -21,6 +21,8 @@ class UserProfile {
 
         std::string getUsername();
 
+        std::string getPassword();
+
         bool checkPassword(std::string attempt);
 
         void joinEvent(std::string eventName, std::unordered_map<std::string, std::shared_ptr<Event>> eventList);

@@ -23,6 +23,11 @@ Server::Server(int port, int max_clients, bool use_dummy_data) {
     if (use_dummy_data) {
         users["Bob"] = std::make_unique<UserProfile>("Bob", "1234");
         allEvents["WWF Fundraiser"] = std::make_shared<Event>("WWF Fundraiser", "Raise money for animal conservation", "WWF", "New York", "01/00/00", "1");
+        users["Bob"]->joinEvent("WWF Fundraiser", allEvents);
+        addUserToEvent("WWF Fundraiser", "Bob"); 
+        allEvents["WWF Fundraiser 2"] = std::make_shared<Event>("WWF Fundraiser 2", "Raise money for animal conservation", "WWF", "New York", "02/00/00", "1");
+        users["Bob"]->joinEvent("WWF Fundraiser 2", allEvents);
+        addUserToEvent("WWF Fundraiser 2", "Bob"); 
     }
 }
 
@@ -77,8 +82,12 @@ void Server::addUserToEvent(std::string eventName, std::string userName) {
     allEvents[eventName]->addVolunteer(userName);
 }
 
-void Server::sendEventList() {
-
+void Server::sendEventList(std::string userName) {
+    std::string giant_string = "";
+    for (const auto& [key, value] : allEvents) {
+        giant_string += value->toString();
+    }
+    if (send(connections[userName], giant_string.c_str(), giant_string.size(), 0) < 0) {std::cout << "Error sending to " << userName << "\n";}
 }
 
 bool Server::checkLogIn(std::string userName, std::string password) {
@@ -88,18 +97,23 @@ bool Server::checkLogIn(std::string userName, std::string password) {
             std::cout << "Login successful\n";
             return true;
         }
+        std::cout << "Attempted Password: " << password << "|" << "Password: " << it->second->getPassword() << "\n";
     }
     std::cout << "Login Fail\n";
     return false;
 }
 
 void Server::sendUserEvents(std::string userName) {
-    std::vector<std::string> user_events = users[userName]->getEvents();
-    std::string giant_string = "";
-    for (std::string& event: user_events) {
-        giant_string += event;
+    if (users.find(userName) != users.end()) {
+        std::vector<std::string> user_events = users[userName]->getEvents();
+        std::string giant_string = "";
+        for (std::string& event: user_events) {
+            giant_string += event;
+        }
+        if (send(connections[userName], giant_string.c_str(), giant_string.size(), 0) < 0) {std::cout << "Error sending to " << userName << "\n";}
+    } else {
+        std::cout << "user doesnt exist\n";
     }
-    if (send(connections[userName], giant_string.c_str(), giant_string.size(), 0) < 0) {std::cout << "Error sending to " << userName << "\n";}
 }
 
 void Server::createNewAccount(std::string newName, std::string newPassword) {
@@ -118,6 +132,7 @@ void Server::process_request(std::string request) {
     while(getline(ss, item, ' ')) {
         parsed.push_back(item);
     }
+    std::cout << "parsed[0] : " << parsed[0] << '|' << '\n';
     if (parsed[0] == "join_event") {
         if (allEvents.find(parsed[2]) != allEvents.end()) {
             users[parsed[1]]->joinEvent(parsed[2], allEvents);
@@ -126,10 +141,14 @@ void Server::process_request(std::string request) {
             if (send(connections[parsed[1]], "That event doesn't exist", 25, 0) < 0) {std::cout << "Error sending to " << parsed[1] << "\n";}
         }
     } else if (parsed[0] == "get_events") {
-
+        sendEventList(parsed[1]);
     } else if (parsed[0] == "submit_login") {
         std::cout << "Someone is trying to login\n";
-        if (checkLogIn(parsed[2], parsed[3])) {
+        for (std::string info : parsed) {
+            std::cout << info << "\n";
+        }
+        std::cout << "end\n";
+        if (checkLogIn(parsed[2], parsed[4])) {
             // send username to client
             connections[parsed[2]] = std::stoi(parsed[1]);
             if (send(connections[parsed[2]], parsed[2].c_str(), parsed[2].size(), 0) < 0) {std::cout << "Error sending to " << parsed[2] << "\n";}
@@ -138,6 +157,7 @@ void Server::process_request(std::string request) {
             if (send(connections[parsed[2]], "DENIED haha begone incorrect user", 34, 0) < 0) {std::cout << "Error sending to" << parsed[2] << "\n";}
         }
     } else if (parsed[0] == "see_my_events") {
+        std::cout << "tried to see events\n";
         sendUserEvents(parsed[1]);
     } else if (parsed[0] == "signup") {
         //users[parsed[2]] = UserProfile(parsed[2], parsed[3]);
