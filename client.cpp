@@ -8,7 +8,7 @@ void get_commands(){
     std::cout << "!login username password\n";
     std::cout << "!signup username password\n";
     std::cout << "!get_events\n";
-    std::cout << "!fliter_events\n";
+    std::cout << "!filter_events\n";
     std::cout << "!create_event\n";
     std::cout << "!exit\n";
     return;
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
                 std::cout << i + ": " + eventlist[i];
             }
         }
-        else if (input.find("!fliter_events") != std::string::npos){
+        else if (input.find("!filter_events") != std::string::npos){
             std::string option = input.substr(input.find(" ")+1);
             Commands::viewEvents(option);
         }

@@ -86,8 +86,45 @@ void Commands::viewEvents(std::string option){
             std::cout << "\n";
         }
     }
-    else if(option == ""){
+    else if(option == "name"){
+        sort(eventList.begin(), eventList.end(), sortName);
 
+        for (int i = 0; i < eventList.size() - 1;i++) {
+            for (int j = 0; j < eventList[0].size() - 1; j++) {
+                std::cout << eventList[i][j] << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+    else if(option == "organizer"){
+        sort(eventList.begin(), eventList.end(), sortOrganizer);
+
+        for (int i = 0; i < eventList.size() - 1;i++) {
+            for (int j = 0; j < eventList[0].size() - 1; j++) {
+                std::cout << eventList[i][j] << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+    else if(option == "date_start"){
+        sort(eventList.begin(), eventList.end(), sortDate);
+
+        for (int i = 0; i < eventList.size() - 1;i++) {
+            for (int j = 0; j < eventList[0].size() - 1; j++) {
+                std::cout << eventList[i][j] << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+    else if(option == "date_range"){
+        sort(eventList.begin(), eventList.end(), sortDateRange);
+
+        for (int i = 0; i < eventList.size() - 1;i++) {
+            for (int j = 0; j < eventList[0].size() - 1; j++) {
+                std::cout << eventList[i][j] << " ";
+            }
+            std::cout << "\n";
+        }
     }
 }
 
@@ -98,5 +135,18 @@ bool sortSize(const std::vector<int>& v1, const std::vector<int>& v2)
 
 bool sortDate(const std::vector<int>& v1, const std::vector<int>& v2)
 {
-    return v1[6] < v2[6];
+    return v1[4] < v2[4];
+}
+
+bool sortDateRange(const std::vector<int>& v1, const std::vector<int>& v2)
+{
+    return v1[5] < v2[5];
+}
+
+bool sortName(const std::vector<std::string>& v1, const std::vector<std::string>& v2){
+    return v1[0].compare(v2[0]);
+}
+
+bool sortOrganizer(const std::vector<std::string>& v1, const std::vector<std::string>& v2){
+    return v1[1].compare(v2[1]);
 }
