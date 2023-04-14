@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <iostream>
+#include <algorithm>
 
 class Commands {
     public:
@@ -17,7 +18,7 @@ class Commands {
         static void joinEvent(std::string eventName);
         static void createEvent(std::vector<std::string> eventInfo);
         static void viewEvents(std::string option);
-        static std::vector<std::string> getEvents();
+        static std::vector<std::string> getEvents(std::string option);
 
 };
 

@@ -23,9 +23,15 @@ std::string Commands::signUp(std::string username, std::string password){
     return std::string(buffer);
 }
 
-std::vector<std::string> Commands::getEvents() {
+std::vector<std::string> Commands::getEvents(std::string option) {
     std::string assembleReq;
-    assembleReq = "see_my_events " + Commands::user;
+    if (option == "my"){
+        assembleReq = "see_my_events " + Commands::user;
+    }
+    else
+    {
+        assembleReq = "all_events";
+    }
     if (send(Commands::sockfd, assembleReq.c_str(), assembleReq.size(), 0) < 0) {}
 }
 
@@ -45,16 +51,16 @@ void Commands::createEvent(std::vector<std::string> eventInfo) {
 }
 
 void Commands::viewEvents(std::string option){
-    std::vector<std::string> events = Commands::getEvents();
+    std::vector<std::string> events = Commands::getEvents("all");
     std::vector<std::vector<std::string>> eventList;
     for (std::string event : events) {
         //substrings names, organizer, location, etc from events
         std::string name = event.substr(0, event.find(" ") - 1);
-        std::string organizer = event.substr(event.find(name.length, 1) - 1, event.find(" ", name.length + 1));
-        std::string location = event.substr(event.find(organizer.length, 1) - 1, event.find(" ", organizer.length + 1));
-        std::string date_start = event.substr(event.find(location.length, 1) - 1, event.find(" ", location.length + 1));
-        std::string date_range = event.substr(event.find(date_start.length, 1) - 1, event.find(" ", date_start.length + 1));
-        std::string description = event.substr(event.find(date_range.length, 1) - 1, event.find(" ", date_range.length + 1));
+        std::string organizer = event.substr(event.find(name.length(), 1) - 1, event.find(" ", name.length() + 1));
+        std::string location = event.substr(event.find(organizer.length(), 1) - 1, event.find(" ", organizer.length() + 1));
+        std::string date_start = event.substr(event.find(location.length(), 1) - 1, event.find(" ", location.length() + 1));
+        std::string date_range = event.substr(event.find(date_start.length(), 1) - 1, event.find(" ", date_start.length() + 1));
+        std::string description = event.substr(event.find(date_range.length(), 1) - 1, event.find(" ", date_range.length() + 1));
         int size = std::stoi(description.substr(0, description.find(" ") - 1));
         //puts them into a vector
         std::vector<std::string> singleEvent;
@@ -72,8 +78,8 @@ void Commands::viewEvents(std::string option){
         //sorts by a size
         sort(eventList.begin(), eventList.end(), sortSize);
 
-        for (int i = 0; i < eventList.length - 1;i++) {
-            for (int j = 0; j < eventList[0].length - 1; j++) {
+        for (int i = 0; i < eventList.length() - 1;i++) {
+            for (int j = 0; j < eventList[0].length() - 1; j++) {
                 cout << vect[i][j] << " ";
             }
             cout << endl;
