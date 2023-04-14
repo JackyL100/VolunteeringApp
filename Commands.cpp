@@ -69,7 +69,7 @@ void Commands::viewEvents(std::string option){
         temp = temp.substr(date_range.size() + 1);
         std::string description = temp.substr(0, temp.find(" "));
         temp = temp.substr(description.size() + 1);
-        int size = stoi(temp);
+        int size = std::stoi(temp);
         //puts them into a vector
         std::vector<std::string> singleEvent;
         singleEvent.push_back(name);
