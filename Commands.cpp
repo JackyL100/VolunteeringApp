@@ -56,13 +56,20 @@ void Commands::viewEvents(std::string option){
     std::vector<std::vector<std::string>> eventList;
     for (std::string event : events) {
         //substrings names, organizer, location, etc from events
-        std::string name = event.substr(0, event.find(" ") - 1);
-        std::string organizer = event.substr(event.find(name.size(), 1) - 1, event.find(" ", name.size() + 1));
-        std::string location = event.substr(event.find(organizer.size(), 1) - 1, event.find(" ", organizer.size() + 1));
-        std::string date_start = event.substr(event.find(location.size(), 1) - 1, event.find(" ", location.size() + 1));
-        std::string date_range = event.substr(event.find(date_start.size(), 1) - 1, event.find(" ", date_start.size() + 1));
-        std::string description = event.substr(event.find(date_range.size(), 1) - 1, event.find(" ", date_range.size() + 1));
-        int size = std::stoi(description.substr(0, description.find(" ") - 1));
+        std:string temp = event;
+        std::string name = temp.substr(0, temp.find(" "));
+        temp = temp.substr(name.size() + 1);
+        std::string organizer = temp.substr(0, temp.find(" "));
+        temp = temp.substr(organizer.size() + 1);
+        std::string location = temp.substr(0, temp.find(" "));
+        temp = temp.substr(location.size() + 1);
+        std::string date_start = temp.substr(0, temp.find(" "));
+        temp = temp.substr(date_start.size() + 1);
+        std::string date_range = temp.substr(0, temp.find(" "));
+        temp = temp.substr(date_range.size() + 1);
+        std::string description = temp.substr(0, temp.find(" "));
+        temp = temp.substr(description.size() + 1);
+        int size = stoi(temp);
         //puts them into a vector
         std::vector<std::string> singleEvent;
         singleEvent.push_back(name);
@@ -79,8 +86,8 @@ void Commands::viewEvents(std::string option){
         //sorts by a size
         sort(eventList.begin(), eventList.end(), sortSize);
 
-        for (int i = 0; i < eventList.size() - 1;i++) {
-            for (int j = 0; j < eventList[0].size() - 1; j++) {
+        for (int i = 0; i < eventList.size();i++) {
+            for (int j = 0; j < eventList[0].size(); j++) {
                 std::cout << eventList[i][j] << " ";
             }
             std::cout << "\n";
@@ -89,8 +96,8 @@ void Commands::viewEvents(std::string option){
     else if(option == "name"){
         sort(eventList.begin(), eventList.end(), sortName);
 
-        for (int i = 0; i < eventList.size() - 1;i++) {
-            for (int j = 0; j < eventList[0].size() - 1; j++) {
+        for (int i = 0; i < eventList.size();i++) {
+            for (int j = 0; j < eventList[0].size(); j++) {
                 std::cout << eventList[i][j] << " ";
             }
             std::cout << "\n";
@@ -99,8 +106,8 @@ void Commands::viewEvents(std::string option){
     else if(option == "organizer"){
         sort(eventList.begin(), eventList.end(), sortOrganizer);
 
-        for (int i = 0; i < eventList.size() - 1;i++) {
-            for (int j = 0; j < eventList[0].size() - 1; j++) {
+        for (int i = 0; i < eventList.size();i++) {
+            for (int j = 0; j < eventList[0].size(); j++) {
                 std::cout << eventList[i][j] << " ";
             }
             std::cout << "\n";
@@ -109,8 +116,8 @@ void Commands::viewEvents(std::string option){
     else if(option == "date_start"){
         sort(eventList.begin(), eventList.end(), sortDate);
 
-        for (int i = 0; i < eventList.size() - 1;i++) {
-            for (int j = 0; j < eventList[0].size() - 1; j++) {
+        for (int i = 0; i < eventList.size();i++) {
+            for (int j = 0; j < eventList[0].size(); j++) {
                 std::cout << eventList[i][j] << " ";
             }
             std::cout << "\n";
@@ -119,8 +126,8 @@ void Commands::viewEvents(std::string option){
     else if(option == "date_range"){
         sort(eventList.begin(), eventList.end(), sortDateRange);
 
-        for (int i = 0; i < eventList.size() - 1;i++) {
-            for (int j = 0; j < eventList[0].size() - 1; j++) {
+        for (int i = 0; i < eventList.size();i++) {
+            for (int j = 0; j < eventList[0].size(); j++) {
                 std::cout << eventList[i][j] << " ";
             }
             std::cout << "\n";
@@ -128,19 +135,67 @@ void Commands::viewEvents(std::string option){
     }
 }
 
-bool sortSize(const std::vector<int>& v1, const std::vector<int>& v2)
+bool sortSize(const std::vector<string>& v1, const std::vector<string>& v2)
 {
-    return v1[6] < v2[6];
+    return std::stoi(v1[6]) < std::(v2[6]);
 }
 
-bool sortDate(const std::vector<int>& v1, const std::vector<int>& v2)
+bool sortDate(const vector<string>& v1, const vector<string>& v2)
 {
-    return v1[4] < v2[4];
+    std::vector<std::string> arrlist1;
+    std::vector<std::string> arrlist2;
+    std::string first = v1[3];
+    std::string second = v2[3];
+    //splits first date into 3 
+    arrlist1.push_back(first.substr(0, first.find("/")));
+    first = first.substr(first.find("/") + 1);
+    arrlist1.push_back(first.substr(0, first.find("/")));
+    first = first.substr(first.find("/") + 1);
+    arrlist1.push_back(first);
+    //splites second date into 3
+    arrlist2.push_back(second.substr(0, second.find("/")));
+    second = second.substr(second.find("/") + 1);
+    arrlist2.push_back(second.substr(0, second.find("/")));
+    second = second.substr(second.find("/") + 1);
+    arrlist2.push_back(second);
+    //compares years
+    if (std::stoi(arrlist1[2]) != std::stoi(arrlist2[2])) {
+        
+        if (std::stoi(arrlist1[2]) < std::stoi(arrlist2[2])) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    //compares months
+    else if (std::stoi(arrlist1[0]) != std::stoi(arrlist2[0])) {
+
+        if (std::stoi(arrlist1[0]) < std::stoi(arrlist2[0])) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    //compares days
+    else if (std::stoi(arrlist1[1]) != std::stoi(arrlist2[1])) {
+
+        if (std::stoi(arrlist1[1]) < std::stoi(arrlist2[1])) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    else {
+        return true;
+    }
 }
 
-bool sortDateRange(const std::vector<int>& v1, const std::vector<int>& v2)
+bool sortDateRange(const std::vector<string>& v1, const std::vector<string>& v2)
 {
-    return v1[5] < v2[5];
+    return std::stoi(v1[5]) < std::stoi(v2[5]);
 }
 
 bool sortName(const std::vector<std::string>& v1, const std::vector<std::string>& v2){
