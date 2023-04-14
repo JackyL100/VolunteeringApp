@@ -63,7 +63,7 @@ class Server {
 
         std::queue<std::string> incoming_requests;
 
-        Server(int port, int max_clients);
+        Server(int port, int max_clients, bool use_dummy_events);
 
         void kill();
 
