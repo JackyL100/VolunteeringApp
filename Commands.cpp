@@ -56,7 +56,7 @@ void Commands::viewEvents(std::string option){
     std::vector<std::vector<std::string>> eventList;
     for (std::string event : events) {
         //substrings names, organizer, location, etc from events
-        std:string temp = event;
+        std::string temp = event;
         std::string name = temp.substr(0, temp.find(" "));
         temp = temp.substr(name.size() + 1);
         std::string organizer = temp.substr(0, temp.find(" "));
@@ -135,12 +135,12 @@ void Commands::viewEvents(std::string option){
     }
 }
 
-bool sortSize(const std::vector<string>& v1, const std::vector<string>& v2)
+bool sortSize(const std::vector<std::string>& v1, const std::vector<std::string>& v2)
 {
-    return std::stoi(v1[6]) < std::(v2[6]);
+    return std::stoi(v1[6]) < std::stoi(v2[6]);
 }
 
-bool sortDate(const vector<string>& v1, const vector<string>& v2)
+bool sortDate(const std::vector<std::string>& v1, const std::vector<std::string>& v2)
 {
     std::vector<std::string> arrlist1;
     std::vector<std::string> arrlist2;
@@ -193,7 +193,7 @@ bool sortDate(const vector<string>& v1, const vector<string>& v2)
     }
 }
 
-bool sortDateRange(const std::vector<string>& v1, const std::vector<string>& v2)
+bool sortDateRange(const std::vector<std::string>& v1, const std::vector<std::string>& v2)
 {
     return std::stoi(v1[5]) < std::stoi(v2[5]);
 }
