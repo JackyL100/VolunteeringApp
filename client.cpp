@@ -67,7 +67,10 @@ int main(int argc, char* argv[])
         }
         else if (input.find("!get_events") != std::string::npos) {
             std::string option = input.substr(input.find(" ")+1);
-            Commands::getEvents(option);
+            std::vector <std::string> eventlist = Commands::getEvents(option);
+            for (int i = 0; i < eventlist.size(); i++){
+                std::cout << i + ": " + eventlist[i];
+            }
         }
         else if (input.find("!fliter_events") != std::string::npos){
             std::string option = input.substr(input.find(" ")+1);
