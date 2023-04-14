@@ -8,6 +8,7 @@ void get_commands(){
     std::cout << "!login username password\n";
     std::cout << "!signup username password\n";
     std::cout << "!get_events\n";
+    std::cout << "!fliter_events\n";
     std::cout << "!create_event\n";
     std::cout << "!exit\n";
     return;
@@ -70,6 +71,13 @@ int main(int argc, char* argv[])
         }
         else if (input.find("!get_events") != std::string::npos) {
             std::string option = input.substr(input.find(" ")+1);
+            std::vector <std::string> eventlist = Commands::getEvents(option);
+            for (int i = 0; i < eventlist.size(); i++){
+                std::cout << i + ": " + eventlist[i];
+            }
+        }
+        else if (input.find("!fliter_events") != std::string::npos){
+            std::string option = input.substr(input.find(" ")+1);
             Commands::viewEvents(option);
         }
         else if (input.find("!create_event") != std::string::npos) {
@@ -86,7 +94,8 @@ int main(int argc, char* argv[])
             std::cin >> event_data[4];
         } 
         else if (input.find("!join_event") != std::string::npos) {
-            
+            std::string name = input.substr(input.find(" ", 0)+1,input.find(" ", 1)-2);
+            Commands::joinEvent(name);
         }
         else if (input == "!exit"){
             x = 2;
