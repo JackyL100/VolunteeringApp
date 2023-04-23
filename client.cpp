@@ -44,17 +44,27 @@ int main(int argc, char* argv[])
     
     int x = 0;
     bool loggedIn = false;
+    std::vector<std::string> vec_input;
     while (x < 1){
         std::string input;
+        std::string token;
         std::cout << "Enter a command\n";
         std::getline(std::cin, input);
-        if (input == "!help"){
+        std::stringstream ss(input);
+        while (std::getline(ss, token, ' ')) {
+            vec_input.push_back(token);
+        }
+        if (vec_input.size() == 0) {
+            continue;
+        }
+        if (vec_input[0] == "!help"){
             get_commands();
         }
-        else if (!loggedIn && input.find("!login") != std::string::npos){
-            std::string username = input.substr(input.find(" ", 0)+1,input.find(" ", 1)-2);
-            std::string password = input.substr(input.find(username)+username.length()+1);
-            std::string server_response = Commands::logIn(username, password);
+        else if (!loggedIn && vec_input[0] == "!login"){
+            if (vec_input.size() != 3) {
+                continue;
+            }
+            std::string server_response = Commands::logIn(vec_input[1], vec_input[2]);
             if (server_response == "DENIED haha begone incorrect user") {
                 std::cout << "failed to login\n";
             } else {
@@ -64,26 +74,29 @@ int main(int argc, char* argv[])
                 std::cout << "You are " << Commands::user << "\n";
             }
         } 
-        else if (!loggedIn && input.find("!signup") != std::string::npos) {
-            std::string username = input.substr(input.find(" ", 0)+1,input.find(" ", 1)-2);
-            std::string password = input.substr(input.find(username)+username.length()+1);
-            Commands::user = Commands::signUp(username, password);
+        else if (!loggedIn && vec_input[0] == "!signup") {
+            if (vec_input.size() != 3) {
+                continue;
+            }
+            Commands::user = Commands::signUp(vec_input[1], vec_input[2]);
             loggedIn = true;
             std::cout << "Logged In!\n";
             std::cout << "You are " << Commands::user << "\n";
         }
-        else if (input.find("!get_events") != std::string::npos) {
-            std::string option = input.substr(input.find(" ")+1);
-            std::vector <std::string> eventlist = Commands::getEvents(option);
+        else if (vec_input[0] == "!get_events") {
+            if (vec_input.size() != 2) {
+                continue;
+            }
+            std::vector <std::string> eventlist = Commands::getEvents(vec_input[1]);
             for (int i = 0; i < eventlist.size(); i++){
                 std::cout << i << ": " << eventlist[i];
             }
         }
-        else if (input.find("!filter_events") != std::string::npos){
+        else if (vec_input[0] == "!filter_events"){
             std::string option = input.substr(input.find(" ")+1);
             Commands::viewEvents(option);
         }
-        else if (input.find("!create_event") != std::string::npos) {
+        else if (vec_input[0] == "!create_event") {
             std::vector<std::string> event_data(5);
             std::cout << "Enter the name of the Volunteering Event: ";
             std::cin >> event_data[0];
@@ -96,12 +109,15 @@ int main(int argc, char* argv[])
             std::cout << "Enter how long the Volunteering Event will last: ";
             std::cin >> event_data[4];
         } 
-        else if (input.find("!join_event") != std::string::npos) {
-            //std::string name = input.substr(input.find(" ", 0)+1,input.find(" ", 1)-2);
-            input.erase(0, 13);
-            Commands::joinEvent(input);
+        else if (vec_input[0] == "!join_event") {
+            if (vec_input.size() == 1) {
+                Commands::joinEvent(vec_input[1]);
+            } 
+            else {
+                std::cout << "Incorrect amount of parameters\n";
+            } 
         }
-        else if (input == "!exit"){
+        else if (vec_input[0] == "!exit"){
             x = 2;
             std::cout << "Exiting\n";
             close(Commands::sockfd);

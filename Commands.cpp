@@ -5,8 +5,9 @@ std::string Commands::user = "";
 
 std::string Commands::logIn(std::string username, std::string password){
     std::string assembleReq;
-    assembleReq = "submit_login " + username + " " + password;
-    if (send(Commands::sockfd, assembleReq.c_str(), assembleReq.size(), 0) < 0) {}
+    assembleReq = "submit_login " + username + password;
+    if (send(Commands::sockfd, (char*)assembleReq.c_str(), assembleReq.size(), 0) < 0) {}
+    std::cout << "Response Sent was: " << assembleReq << "\n";
     std::cout << "Awaiting Response\n";
     char buffer[1024];
     if (recv(Commands::sockfd, buffer, 1023, 0) < 0) {std::cout << "ah shit\n";}
