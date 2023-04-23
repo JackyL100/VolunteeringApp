@@ -5,7 +5,7 @@ std::string Commands::user = "";
 
 std::string Commands::logIn(std::string username, std::string password){
     std::string assembleReq;
-    assembleReq = "submit_login " + username + password;
+    assembleReq = "submit_login " + username + " " + password;
     if (send(Commands::sockfd, (char*)assembleReq.c_str(), assembleReq.size(), 0) < 0) {}
     std::cout << "Response Sent was: " << assembleReq << "\n";
     std::cout << "Awaiting Response\n";

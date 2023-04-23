@@ -8,10 +8,11 @@
     server.kill();
 }*/
 
+
 int main() {
     Server server(80, 10, true);
     //std::thread killThread(quit, std::ref(server));
-    std::vector<std::future<void>> poll_futures;
+    //std::vector<std::future<void>> poll_futures;
     while (server.isAlive()) {
         server.poll_args.clear();
         struct pollfd listening = {server.get_sockfd(), POLLIN, 0};
@@ -29,8 +30,8 @@ int main() {
         }
         for (int i = 1; i < server.poll_args.size(); i++) {
             if (server.poll_args[i].revents) {
-                //server.decide_io(server.connections[server.poll_args[i].fd]);
-                poll_futures.push_back(std::async(std::launch::async, Server::decide_io, server, server.connections[server.poll_args[i].fd]));
+                server.decide_io(server.connections[server.poll_args[i].fd]);
+                //poll_futures.push_back(std::async(std::launch::async, [&server, i](){server.decide_io(server.connections[server.poll_args[i].fd]);}));
                 if (server.connections[server.poll_args[i].fd]->state == STATE_END) {
                     server.connections[server.poll_args[i].fd].reset();
                     close(server.poll_args[i].fd);

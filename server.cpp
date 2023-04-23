@@ -32,6 +32,7 @@ Server::Server(int port, int max_clients, bool use_dummy_data) {
     serv_addr.sin_port = htons(port);
     if (bind(sockfd, (sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {error("ERROR ON BINDING");}
     listen(sockfd, max_clients);
+    alive = true;
     set_to_non_blocking(sockfd);
     //acceptingThread = std::thread([this](){while(this->alive){accepting_new_clients();}});
     /*for (int i = 0; i < 5; i++) {
@@ -65,6 +66,7 @@ void Server::decide_io(std::shared_ptr<Connection> connection) {
         std::string req{connection->read_buf};
         process_request(connection, req);
     } else if (connection->state == STATE_RES) {
+        std::cout << "trying to respond\n";
         respond(connection);
     }
 }
@@ -116,6 +118,7 @@ void Server::respond(std::shared_ptr<Connection> connection) {
             break;
         }
         connection->write_buf_sent += rv;
+        std::cout << connection->write_buf_sent << "\n";
         assert(connection->write_buf_sent <= connection->write_buf_size);
         if (connection->write_buf_sent == connection->write_buf_size) {
             connection->state = STATE_REQ;
@@ -210,10 +213,12 @@ void Server::processLogIn(std::shared_ptr<Connection> connection, std::string us
         // send username to client
         loggedInProfiles[connection->sockfd] = users[userName];
         memcpy(&connection->write_buf, userName.c_str(), userName.size());
+        connection->write_buf_size = userName.size();
     } else {
         // tell them they suck
         std::string response = "DENIED haha begone incorrect user";
         memcpy(&connection->write_buf, response.c_str(), response.size());
+        connection->write_buf_size = response.size();
     }
     connection->state = STATE_RES;
 }
@@ -237,18 +242,19 @@ void Server::process_request(std::shared_ptr<Connection> connection, std::string
     std::string item;
     while(getline(ss, item, ' ')) {
         parsed.push_back(item);
+        std::cout << item << " ";
     }
-    std::cout << "parsed[0] : " << parsed[0] << '|' << '\n';
+    std::cout << "\n";
     if (parsed[0] == "join_event") {
         addUserToEvent(connection, parsed[1]);
     } else if (parsed[0] == "get_events") {
-        sendEventList(parsed[1]);
+        //sendEventList(parsed[1]);
     } else if (parsed[0] == "submit_login") {
         std::cout << "Someone is trying to login\n";
         processLogIn(connection, parsed[1], parsed[2]);
     } else if (parsed[0] == "see_my_events") {
         std::cout << "tried to see events\n";
-        sendUserEvents(parsed[1]);
+       // sendUserEvents(parsed[1]);
     } else if (parsed[0] == "signup") {
         processSignUp(connection, parsed[1], parsed[2]);
     } else if (parsed[0] == "create_event") {

@@ -43,8 +43,6 @@ class Server {
 
         //std::thread thread_pool[5];
 
-        static std::mutex poll_args_mutex;
-
         //std::thread acceptingThread;
 
         socklen_t clilen;
@@ -63,7 +61,7 @@ class Server {
 
         void addUserToEvent(std::string eventName, std::string userName);
 
-        void sendEventList(std::string userName);
+        //void sendEventList(std::string userName);
 
         bool checkLogIn(std::string userName, std::string password);
 
@@ -71,7 +69,7 @@ class Server {
 
         void processSignUp(std::shared_ptr<Connection> connection, std::string userName, std::string password);
 
-        void sendUserEvents(std::string userName);
+        //void sendUserEvents(std::string userName);
 
         void createNewAccount(std::string newName, std::string newPassword);
 
