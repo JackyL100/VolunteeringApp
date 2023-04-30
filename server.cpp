@@ -64,10 +64,14 @@ void Server::decide_io(std::shared_ptr<Connection> connection) {
     if (connection->state == STATE_REQ) {
         reading(connection);
         std::string req{connection->read_buf};
+        memset(connection->read_buf, 0, 4 + MAX_MSG_SIZE);
+        connection->read_buf_size = 0;
         process_request(connection, req);
     } else if (connection->state == STATE_RES) {
         std::cout << "trying to respond\n";
         respond(connection);
+        memset(connection->write_buf, 0, 4 + MAX_MSG_SIZE);
+        connection->read_buf_size = 0;
     }
 }
 
@@ -164,14 +168,16 @@ void Server::addUserToEvent(std::string eventName, std::string userName) {
     } 
 }
 
-/*
-void Server::sendEventList(std::string userName) {
-    std::string giant_string = "";
+
+void Server::sendEventList(std::shared_ptr<Connection> connection) {
+    std::string all_events_string = "";
     for (const auto& [key, value] : allEvents) {
-        giant_string += value->toString();
+        all_events_string += value->toString();
     }
-    if (send(connections[userName], giant_string.c_str(), giant_string.size(), 0) < 0) {std::cout << "Error sending to " << userName << "\n";}
-}*/
+    memcpy(&connection->write_buf, all_events_string.c_str(), all_events_string.size());
+    connection->write_buf_size = all_events_string.size();
+    connection->state = STATE_RES;
+}
 
 bool Server::checkLogIn(std::string userName, std::string password) {
     auto it = users.find(userName);
@@ -186,19 +192,25 @@ bool Server::checkLogIn(std::string userName, std::string password) {
     return false;
 }
 
-/*void Server::sendUserEvents(std::string userName) {
+void Server::sendUserEvents(std::shared_ptr<Connection> connection, std::string userName) {
     if (users.find(userName) != users.end()) {
         std::vector<std::string> user_events = users[userName]->getEvents();
-        std::string giant_string = "";
+        std::string user_events_string = "";
         for (std::string& event: user_events) {
-            giant_string += event;
+            user_events_string += event;
         }
-        if (send(connections[userName], giant_string.c_str(), giant_string.size(), 0) < 0) {std::cout << "Error sending to " << userName << "\n";}
+        memcpy(&connection->write_buf, user_events_string.c_str(), user_events_string.size());
+        connection->write_buf_size = user_events_string.size();
+        
     } else {
         std::cout << "user doesnt exist\n";
+        std::string response = "user doesnt exist";
+        memcpy(&connection->write_buf, response.c_str(), response.size());
+        connection->write_buf_size = response.size();
     }
+    connection->state = STATE_RES;
 }
-*/
+
 void Server::createNewAccount(std::string newName, std::string newPassword) {
     users[newName] = std::make_shared<UserProfile>(newName, newPassword);
 }
@@ -247,14 +259,14 @@ void Server::process_request(std::shared_ptr<Connection> connection, std::string
     std::cout << "\n";
     if (parsed[0] == "join_event") {
         addUserToEvent(connection, parsed[1]);
-    } else if (parsed[0] == "get_events") {
-        //sendEventList(parsed[1]);
+    } else if (parsed[0] == "all_events") {
+        sendEventList(connection);
     } else if (parsed[0] == "submit_login") {
         std::cout << "Someone is trying to login\n";
         processLogIn(connection, parsed[1], parsed[2]);
     } else if (parsed[0] == "see_my_events") {
         std::cout << "tried to see events\n";
-       // sendUserEvents(parsed[1]);
+        sendUserEvents(connection, parsed[1]);
     } else if (parsed[0] == "signup") {
         processSignUp(connection, parsed[1], parsed[2]);
     } else if (parsed[0] == "create_event") {

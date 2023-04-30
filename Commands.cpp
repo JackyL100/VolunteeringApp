@@ -33,7 +33,7 @@ std::vector<std::string> Commands::getEvents(std::string option) {
     }
     else
     {
-        assembleReq = "all_events" + Commands::user;
+        assembleReq = "all_events " + Commands::user;
     }
     if (send(Commands::sockfd, assembleReq.c_str(), assembleReq.size(), 0) < 0) {}
     std::cout << "Awaiting Response\n";

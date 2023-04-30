@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
             }
             std::vector <std::string> eventlist = Commands::getEvents(vec_input[1]);
             for (int i = 0; i < eventlist.size(); i++){
-                std::cout << i << ": " << eventlist[i];
+                std::cout << i << ": " << eventlist[i] << "\n";
             }
         }
         else if (vec_input[0] == "!filter_events"){
@@ -126,5 +126,6 @@ int main(int argc, char* argv[])
         {
             std::cout << "Not a valid command\n";
         }
+        vec_input.clear();
     }
 }   
