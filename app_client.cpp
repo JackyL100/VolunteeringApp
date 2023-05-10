@@ -1,4 +1,3 @@
-//#include "Commands.hpp"
 #include <client.hpp>
 #include <iostream>
 #include <sys/socket.h>
@@ -6,7 +5,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-// compile command: g++ Commands.cpp client.cpp app_client.cpp -std=c++17 -o client.out
+// compile command: g++ network_client.cpp client.cpp app_client.cpp -std=c++17 -o client.out
 
 int main(int argc, char* argv[])
 {
@@ -18,7 +17,7 @@ int main(int argc, char* argv[])
     std::cout << "You are able to create and view events on your calendar and also and view the events that you are attending.\n";
     std::cout << "Please sign/log in to continue\n";
     std::cout << "Enter ""!help"" for commands\n";
-    
+
     bool loggedIn = false;
     std::vector<std::string> vec_input;
 
