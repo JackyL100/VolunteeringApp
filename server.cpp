@@ -131,7 +131,6 @@ void Server::respond(std::shared_ptr<Connection> connection) {
             break;
         }
     }
-    
 }
 
 void Server::accepting_new_clients() {
