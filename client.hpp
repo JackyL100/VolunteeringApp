@@ -5,10 +5,12 @@
 #include <vector>
 #include <unordered_map>
 #include <sstream>
+#include <utility>
+#include <memory>
 
 class app_client {
     private:
-        network_client net_client;
+        std::unique_ptr<network_client> net_client;
         std::string userName;
         std::vector<std::string> createEventScreen();
         bool processLogInResponse(const std::string& response);
@@ -21,8 +23,8 @@ class app_client {
         void help();
         void joinEvent(const std::string& eventName);
         void createEvent();
-        std::vector<std::string> getEvents(const std::string& filter);
-        void viewEvents(const std::string& filter);
+        std::vector<std::string> getEvents();
+        void viewEvents();
 };
 
 

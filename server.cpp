@@ -263,7 +263,7 @@ void Server::process_request(std::shared_ptr<Connection> connection, std::string
     } else if (parsed[0] == "submit_login") {
         std::cout << "Someone is trying to login\n";
         processLogIn(connection, parsed[1], parsed[2]);
-    } else if (parsed[0] == "see_my_events") {
+    } else if (parsed[0] == "get_my_events") {
         std::cout << "tried to see events\n";
         sendUserEvents(connection, parsed[1]);
     } else if (parsed[0] == "signup") {

@@ -1,4 +1,4 @@
-#include <client.hpp>
+#include "client.hpp"
 #include <iostream>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -50,11 +50,8 @@ int main(int argc, char* argv[])
             }
             loggedIn = client.signUp(vec_input[1], vec_input[2]);
         }
-        else if (vec_input[0] == "!get_events") {
-            if (vec_input.size() != 2) {
-                continue;
-            }
-            client.viewEvents(vec_input[1]);
+        else if (vec_input[0] == "!get_my_events") {
+            client.viewEvents();
         }
         else if (vec_input[0] == "!create_event") {
             client.createEvent();

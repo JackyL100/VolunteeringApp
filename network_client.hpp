@@ -26,7 +26,7 @@ class network_client {
         ~network_client();
         void addToWriteBuffer(const std::string& message);
         std::string getBuffer(bool clear);
-        void receive();
+        void receiveSmall();
         void transmit();
 };
 

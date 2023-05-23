@@ -1,9 +1,11 @@
 #include "network_client.hpp"
 
 network_client::network_client(char* hostname, int port) {
+    std::cout << "Creating network client\n";
     struct sockaddr_in serv_addr;
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) error("ERROR OPENING SOCKET");
+    bzero(&serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(port);
     inet_pton(AF_INET, hostname, &serv_addr.sin_addr);
@@ -16,6 +18,8 @@ network_client::~network_client() {
 
 void network_client::addToWriteBuffer(const std::string& message) {
     memcpy(&write_buf, message.c_str(), message.size());
+    write_buf_size = message.size();
+    std::cout << "Added: " << write_buf << " to write_buf\n";
 }
 
 void network_client::error(const char* msg) {
@@ -24,6 +28,7 @@ void network_client::error(const char* msg) {
 }
 
 std::string network_client::getBuffer(bool clear = true) {
+    read_buf_size = 0;
     if (clear) {
         std::string str(read_buf);
         memset(read_buf, 0, 4 + MAX_MSG_SIZE);
@@ -33,8 +38,8 @@ std::string network_client::getBuffer(bool clear = true) {
     }
 }
 
-void network_client::receive() {
-    while (true) {
+void network_client::receiveSmall() {
+   /*while (true) {
         // try to fill buffer
         assert(read_buf_size < sizeof(read_buf));
         int rv = 0;
@@ -58,10 +63,16 @@ void network_client::receive() {
         }
         read_buf_size += rv;
         assert(read_buf_size <= sizeof(read_buf) - read_buf_size);
+    }*/
+    int rv = recv(sockfd, read_buf, 4096, 0);
+    if (rv <= 0) {
+        std::cout << "Error Receiving\n";
     }
+    read_buf_size += rv;
 }
 
 void network_client::transmit() {
+    /*
     while(true) {
         // try to flush buffer
         int rv = 0;
@@ -84,5 +95,17 @@ void network_client::transmit() {
             break;
         }
     }
-    memset(write_buf, 0, 4 + MAX_MSG_SIZE);
+    memset(write_buf, 0, 4 + MAX_MSG_SIZE);*/
+    int n = write_buf_size;
+    while(n > 0) {
+        ssize_t rv = write(sockfd, write_buf, n);
+        if (rv <= 0) {
+            std::cout << "Error sending\n";
+            break;
+        }
+        std::cout << rv << "\n";
+        assert((ssize_t)rv <= n);
+        n -= (size_t)rv;
+        //write_buf += rv;
+    }
 }

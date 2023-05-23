@@ -1,7 +1,7 @@
 #include "client.hpp"
 
-app_client::app_client(char* hostname, int port) : net_client(hostname, port) {
-
+app_client::app_client(char* hostname, int port) {
+    net_client = std::make_unique<network_client>(hostname, port);
 }
 
 bool app_client::processLogInResponse(const std::string& response) {
@@ -19,12 +19,12 @@ bool app_client::processLogInResponse(const std::string& response) {
 bool app_client::logIn(const std::string& username, const std::string& password) {
     std::string assembleReq;
     assembleReq = "submit_login " + username + " " + password;
-    net_client.addToWriteBuffer(assembleReq);
-    net_client.transmit();
+    net_client->addToWriteBuffer(assembleReq);
+    net_client->transmit();
     std::cout << "Response Sent was: " << assembleReq << "\n";
     std::cout << "Awaiting Response\n";
-    net_client.receive();
-    return processLogInResponse(net_client.getBuffer(true));
+    net_client->receiveSmall();
+    return processLogInResponse(net_client->getBuffer(true));
 }
 
 bool app_client::processSignUpResponse(const std::string& response) {
@@ -42,11 +42,11 @@ bool app_client::processSignUpResponse(const std::string& response) {
 bool app_client::signUp(const std::string& username, const std::string& password) {
     std::string assembleReq;
     assembleReq = "signup " + username + " " + password;
-    net_client.addToWriteBuffer(assembleReq);
-    net_client.transmit();
+    net_client->addToWriteBuffer(assembleReq);
+    net_client->transmit();
     std::cout << "Awaiting Response\n";
-    net_client.receive();
-    return processSignUpResponse(net_client.getBuffer(true));
+    net_client->receiveSmall();
+    return processSignUpResponse(net_client->getBuffer(true));
 }
 
 std::string app_client::getUsername() {
@@ -80,10 +80,10 @@ std::vector<std::string> app_client::createEventScreen() {
 void app_client::joinEvent(const std::string& eventName) {
     std::string assemblyReq;
     assemblyReq = "join_event " + userName + " " + eventName;
-    net_client.addToWriteBuffer(assemblyReq);
-    net_client.transmit();
-    net_client.receive();
-    std::cout << net_client.getBuffer(true);
+    net_client->addToWriteBuffer(assemblyReq);
+    net_client->transmit();
+    net_client->receiveSmall();
+    std::cout << net_client->getBuffer(true);
 }
 
 void app_client::createEvent() {
@@ -94,16 +94,16 @@ void app_client::createEvent() {
         assemblyReq += " ";
         assemblyReq += info;
     }
-    net_client.addToWriteBuffer(assemblyReq);
-    net_client.transmit();
+    net_client->addToWriteBuffer(assemblyReq);
+    net_client->transmit();
 }
 
-std::vector<std::string> app_client::getEvents(const std::string& filter) {
-    std::string request = "get_events " + filter;
-    net_client.addToWriteBuffer(request);
-    net_client.transmit();
-    net_client.receive();
-    std::stringstream ss(net_client.getBuffer(true));
+std::vector<std::string> app_client::getEvents() {
+    std::string request = "get_my_events " + userName;
+    net_client->addToWriteBuffer(request);
+    net_client->transmit();
+    net_client->receiveSmall();
+    std::stringstream ss(net_client->getBuffer(true));
     std::string event;
     std::vector<std::string> eventList;
     while(getline(ss, event, '\n')) {
@@ -112,8 +112,8 @@ std::vector<std::string> app_client::getEvents(const std::string& filter) {
     return eventList;
 }
 
-void app_client::viewEvents(const std::string& filter) {
-    std::vector<std::string> events = getEvents(filter);
+void app_client::viewEvents() {
+    std::vector<std::string> events = getEvents();
     for (int i = 0; i < events.size(); i++) {
         std::cout << i + 1 << ": " << events[i] << "\n";
     }
